@@ -108,12 +108,11 @@ function mark_solved_handler() {
         alert('You have solved this problem before!');
     }
     else {
-        if (current_tab_status == 'PENDING')
-        {
+        if (current_tab_status == 'PENDING') {
             //first remove it from added_links
             added_links = added_links.filter(link => (link.url != current_tab.url));
             console.log(added_links);
-            chrome.storage.sync.set({ 'added_links': added_links },function () {
+            chrome.storage.sync.set({ 'added_links': added_links }, function () {
                 console.log('removed from added_links!');
             });
         }
@@ -138,4 +137,7 @@ function show_saved_handler() {
             console.log(obj);
         }
     );
+    chrome.tabs.create({ 'url': chrome.extension.getURL('upsolve-tracker-stats.html') }, function (tab) {
+        console.log(tab);
+    });
 }
