@@ -137,7 +137,5 @@ function show_saved_handler() {
             console.log(obj);
         }
     );
-    chrome.tabs.create({ 'url': chrome.extension.getURL('upsolve-tracker-stats.html') }, function (tab) {
-        console.log(tab);
-    });
+    chrome.tabs.create({ 'url': chrome.extension.getURL('upsolve-tracker-stats.html') });
 }
