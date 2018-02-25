@@ -1,9 +1,9 @@
 let current_tab = null;
 let added_links = [];
 let solved_links = [];
-let current_tab_status = 'NA';
 let tags = ['DP', 'Greedy', 'SegTree', 'Graph'];
 let current_info = null;
+let current_tab_status = 'NA';
 /**
  * possible statuses 
  * NA : Never added
@@ -179,11 +179,15 @@ function display_tags() {
         let txt = document.createTextNode(tag);
         let utxt = document.createElement('a');
         utxt.setAttribute('href', '#');
-        utxt.setAttribute('class', 'tag');
+        if (current_info.tags.indexOf(tag) == -1)
+            utxt.setAttribute('class', 'tag-off');//this was not selected before
+        else
+            utxt.setAttribute('class', 'tag-on');//this is already one of the tags
         utxt.appendChild(txt);
         let li = document.createElement('li');
         li.appendChild(utxt);
         tags_section.appendChild(li);
+        $(utxt).click(tag_click_handler);
     }
 }
 
@@ -192,4 +196,23 @@ function hide_tags() {
     while (tags_section.hasChildNodes()) {
         tags_section.removeChild(tags_section.lastChild);
     }
+}
+
+function tag_click_handler() {
+    console.log('works!');
+    if ($(this).attr('class') == 'tag-off') {
+        console.log(this);
+        if (!current_info.tags)
+            current_info.tags = [];
+        current_info.tags.push(this.innerText);
+        $(this).attr('class', 'tag-on');
+    }
+    else {
+        //"on" tag clicked
+        let thistag = this.innerText;
+        current_info.tags = current_info.tags.filter(tag => (tag != thistag));
+        $(this).attr('class', 'tag-off');
+    }
+    console.log(current_info);
+    chrome.storage.sync.set({ [current_tab.url]: current_info });
 }

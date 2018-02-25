@@ -11,7 +11,7 @@
     zoom: 1;
   }
   
-  .tag {
+  .tag-off {
     background: #eee;
     border-radius: 3px 0 0 3px;
     color: #999;
@@ -26,7 +26,7 @@
     zoom: 1;
   }
   
-  .tag::before {
+  .tag-off::before {
     background: #fff;
     border-radius: 10px;
     box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
@@ -39,7 +39,7 @@
     zoom: 1;
   }
   
-  .tag::after {
+  .tag-off::after {
     background: #fff;
     border-bottom: 13px solid transparent;
     border-left: 10px solid #eee;
@@ -51,11 +51,51 @@
     zoom: 1;
   }
   
-  .tag:hover {
+  .tag-off:hover {
     background-color: crimson;
     color: white;
   }
   
-  .tag:hover::after {
+  .tag-off:hover::after {
      border-left-color: crimson; 
+  }
+
+  .tag-on {
+    background-color: crimson;
+    border-radius: 3px 0 0 3px;
+    color: white;
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+    padding: 0 20px 0 23px;
+    position: relative;
+    margin: 0 10px 10px 0;
+    text-decoration: none;
+    -webkit-transition: color 0.2s;
+    zoom: 1;
+  }
+
+  .tag-on::before {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
+    content: '';
+    height: 6px;
+    left: 10px;
+    position: absolute;
+    width: 6px;
+    top: 10px;
+    zoom: 1;
+  }
+  
+  .tag-on::after {
+    background: #fff;
+    border-bottom: 13px solid transparent;
+    border-left: 10px solid crimson;
+    border-top: 13px solid transparent;
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    zoom: 1;
   }
