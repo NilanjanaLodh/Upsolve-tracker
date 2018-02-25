@@ -2,15 +2,15 @@ console.log('Background running');
 let stored_data = null;
 
 window.onload = function () {
-    chrome.storage.onChanged.addListener(function(changes , type){
-        if(type == "sync")
+    chrome.storage.onChanged.addListener(function (changes, type) {
+        if (type == "sync")
             window.location.reload();
     });
     chrome.storage.sync.get(null, function (obj) {
         console.log(obj);
         stored_data = obj;
         add_pending_problems();
-        add_solved_problems();      
+        add_solved_problems();
     });
 };
 
@@ -32,6 +32,10 @@ function add_pending_problems() {
             urltxt.appendChild(txt);
             let li = document.createElement('li');
             li.appendChild(urltxt);
+            let info = stored_data[link];
+            $(li).append('<br/>' + '<b>Added on</b> : ' + info["time_added"]);
+            let tagstring = extract_tagstring(info)
+            $(li).append('<br/><b>Tags</b> : ' + tagstring);
             ul_added.appendChild(li);
         }
     }
@@ -55,7 +59,24 @@ function add_solved_problems() {
             urltxt.appendChild(txt);
             let li = document.createElement('li');
             li.appendChild(urltxt);
+            let info = stored_data[link];
+            $(li).append('<br/>' + '<b>Solved on</b> : ' + info["time_solved"]);
+            let tagstring = extract_tagstring(info)
+            $(li).append('<br/><b>Tags</b> : ' + tagstring);
             ul_added.appendChild(li);
         }
     }
+}
+
+function extract_tagstring(info) {
+    let tagstring = '';
+    if (!info.tags || info.tags.length == 0)
+        tagstring += 'None';
+    else {
+        tagstring += info.tags[0];
+        for (let i = 1; i < info.tags.length; i++) {
+            tagstring += ', ' + info.tags[i];
+        }
+    }
+    return tagstring;
 }
