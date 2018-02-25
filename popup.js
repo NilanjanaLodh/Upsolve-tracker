@@ -2,6 +2,8 @@ let current_tab = null;
 let added_links = [];
 let solved_links = [];
 let current_tab_status = 'NA';
+let tags = ['DP', 'Greedy', 'SegTree', 'Graph'];
+let current_info = null;
 /**
  * possible statuses 
  * NA : Never added
@@ -28,6 +30,7 @@ function initialize() {
     console.log('Before  : ' + new Date().toLocaleString());
     //chrome storage set up
     chrome.storage.sync.get(null, function (obj) {
+        console.log(obj);
         var prev_added_links = obj.added_links;
         var prev_solved_links = obj.solved_links;
         var query = { active: true, currentWindow: true };
@@ -41,8 +44,7 @@ function initialize() {
             else {
                 //previous added_links have to be used
                 added_links = prev_added_links;
-                tmp_added_urls = added_links.map(link => link.url);
-                if (tmp_added_urls.indexOf(current_tab.url) != -1)
+                if (added_links.indexOf(current_tab.url) != -1)
                     current_tab_status = 'PENDING';
             }
             if (!prev_solved_links) {
@@ -54,10 +56,22 @@ function initialize() {
                 //previous solved_links have to be used
                 solved_links = prev_solved_links;
                 if (current_tab_status == 'NA') {
-                    tmp_solved_urls = solved_links.map(link => link.url);
-                    if (tmp_solved_urls.indexOf(current_tab.url) != -1)
+                    if (solved_links.indexOf(current_tab.url) != -1)
                         current_tab_status = 'SOLVED';
                 }
+            }
+            if (!obj.tags) {
+                chrome.storage.sync.set({ 'tags': tags }, function () {
+                    console.log('Set up tags for the first time!');
+                });
+            }
+            else {
+                tags = obj.tags;
+            }
+            if (current_tab_status != 'NA') {
+                current_info = obj[current_tab.url];
+                console.log(current_info);
+                display_tags();
             }
         });
 
@@ -72,14 +86,21 @@ function add_link_handler() {
     else if (current_tab_status == 'SOLVED')
         alert('You have solved this problem before!');
     else {
-        let latest = {
-            'url': current_tab.url,
-            'time': new Date()
-        };
         current_tab_status = 'PENDING';
-        added_links.push(latest);
+        added_links.push(current_tab.url);
+        current_info = {
+            'status': 'PENDING',
+            'time_added': new Date().toDateString(),
+            'tags': []
+        };
         console.log(added_links);
-        chrome.storage.sync.set({ 'added_links': added_links }, function () {
+        console.log(current_info);
+
+        chrome.storage.sync.set({
+            'added_links': added_links,
+            [current_tab.url]: current_info
+        }, function () {
+            display_tags();
             console.log('saved!');
             alert(current_tab.url + ' saved!');
         });
@@ -93,11 +114,15 @@ function remove_link_handler() {
     else if (current_tab_status == 'SOLVED')
         alert('You have solved this problem before!');
     else {
-        added_links = added_links.filter(link => (link.url != current_tab.url));
+        added_links = added_links.filter(link => (link != current_tab.url));
         current_tab_status = 'NA';
+        current_info = null;
         console.log(added_links);
         chrome.storage.sync.set({ 'added_links': added_links }, function () {
             console.log('removed!');
+        });
+        hide_tags();
+        chrome.storage.sync.remove(current_tab.url, function () {
             alert(current_tab.url + ' removed!');
         });
     }
@@ -110,20 +135,28 @@ function mark_solved_handler() {
     else {
         if (current_tab_status == 'PENDING') {
             //first remove it from added_links
-            added_links = added_links.filter(link => (link.url != current_tab.url));
+            added_links = added_links.filter(link => (link != current_tab.url));
             console.log(added_links);
             chrome.storage.sync.set({ 'added_links': added_links }, function () {
                 console.log('removed from added_links!');
             });
         }
-        let latest = {
-            'url': current_tab.url,
-            'time': new Date()
-        };
-        solved_links.push(latest);
+
+        if (!current_info)
+            current_info = { 'tags': [] };
+        if (current_tab_status == 'NA') {
+            display_tags();
+        }
         current_tab_status = 'SOLVED';
+        current_info.status = 'SOLVED';
+        current_info.time_solved = new Date().toDateString();
+        solved_links.push(current_tab.url);
         console.log(solved_links);
-        chrome.storage.sync.set({ 'solved_links': solved_links }, function () {
+        console.log(current_info);
+        chrome.storage.sync.set({
+            'solved_links': solved_links,
+            [current_tab.url]: current_info
+        }, function () {
             console.log('marked as solved!');
             alert(current_tab.url + ' marked as solved!');
         });
@@ -138,4 +171,25 @@ function show_saved_handler() {
         }
     );
     chrome.tabs.create({ 'url': chrome.extension.getURL('upsolve-tracker-stats.html') });
+}
+
+function display_tags() {
+    let tags_section = document.getElementById('tags-section');
+    for (tag of tags) {
+        let txt = document.createTextNode(tag);
+        let utxt = document.createElement('a');
+        utxt.setAttribute('href', '#');
+        utxt.setAttribute('class', 'tag');
+        utxt.appendChild(txt);
+        let li = document.createElement('li');
+        li.appendChild(utxt);
+        tags_section.appendChild(li);
+    }
+}
+
+function hide_tags() {
+    let tags_section = document.getElementById('tags-section');
+    while (tags_section.hasChildNodes()) {
+        tags_section.removeChild(tags_section.lastChild);
+    }
 }

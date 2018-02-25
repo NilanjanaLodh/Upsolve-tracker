@@ -11,7 +11,6 @@ window.onload = function () {
         stored_data = obj;
         add_pending_problems();
         add_solved_problems();      
-
     });
 };
 
@@ -26,9 +25,9 @@ function add_pending_problems() {
         pending_p.appendChild(ul_added);
 
         for (link of stored_data.added_links) {
-            let txt = document.createTextNode(link.url);
+            let txt = document.createTextNode(link);
             let urltxt = document.createElement('a');
-            urltxt.setAttribute('href', link.url);
+            urltxt.setAttribute('href', link);
             urltxt.setAttribute('target', '_blank');
             urltxt.appendChild(txt);
             let li = document.createElement('li');
@@ -49,9 +48,9 @@ function add_solved_problems() {
         solved_p.appendChild(ul_added);
 
         for (link of stored_data.solved_links) {
-            let txt = document.createTextNode(link.url);
+            let txt = document.createTextNode(link);
             let urltxt = document.createElement('a');
-            urltxt.setAttribute('href', link.url);
+            urltxt.setAttribute('href', link);
             urltxt.setAttribute('target', '_blank');
             urltxt.appendChild(txt);
             let li = document.createElement('li');
