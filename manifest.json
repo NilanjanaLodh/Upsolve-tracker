@@ -2,16 +2,6 @@
     "manifest_version": 2,
     "name": "UpSolve tracker",
     "version": "0.01",
-    "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "content.js"
-            ]
-        }
-    ],
     "browser_action": {
         "default_icon": "greytick.png",
         "default_title": "UpSolve tracker",
