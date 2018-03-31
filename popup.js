@@ -1,9 +1,14 @@
 let current_tab = null;
 let added_links = [];
 let solved_links = [];
-let tags = ['DP', 'Greedy', 'SegTree', 'Graph'];
+let tags = ['DP', 'Greedy', 'AdHoc', 'Graph'];
 let current_info = null;
 let current_tab_status = 'NA';
+
+let tag_input_el = null;
+let tag_list_el = null;
+let tags_section = null;
+let onscreen_tags = new Set();
 /**
  * possible statuses 
  * NA : Never added
@@ -22,6 +27,11 @@ window.onload = function () {
     document.getElementById("remove_link").addEventListener("click", remove_link_handler);
     document.getElementById("mark_solved").addEventListener("click", mark_solved_handler);
     document.getElementById("show_saved").addEventListener("click", show_saved_handler);
+    tag_input_el = document.getElementById("tag_input");
+    tag_input_el.addEventListener("keyup", add_tag, false);
+    tag_list_el = document.getElementById("tag_list");
+    tags_section = document.getElementById("tags-section");
+    populate_tag_list();
 };
 
 
@@ -182,37 +192,28 @@ function show_saved_handler() {
     chrome.tabs.create({ 'url': chrome.extension.getURL('dashboard.html') });
 }
 
+function create_tag_element(tagname,on=false){
+    let txt = document.createTextNode(tagname);
+    let utxt = document.createElement('a');
+    utxt.setAttribute('href', '#');
+    if (on)
+        utxt.setAttribute('class', 'tag-on');//this was not selected before
+    else
+        utxt.setAttribute('class', 'tag-off');//this is already one of the tags
+    utxt.appendChild(txt);
+    let li = document.createElement('li');
+    li.appendChild(utxt);
+    tags_section.appendChild(li);
+    $(utxt).click(tag_click_handler);
+    onscreen_tags.add(tag);
+}
+
 function display_tags() {
     let tagdiv = document.getElementById('tagdiv');
     tagdiv.style.display = 'block';
-    let my_field = document.getElementById('TagInput');
-    
-          my_field.addEventListener("keyup", function (event) {
-              if (event.keyCode == 13) {
-                  event.preventDefault();
-    
-                  if (my_field.value.length != 0) {
-                      swal(my_field.value);
-                      // Run my specific process with my_field.value 
-                      //my_field.value = '';
-                  }
-              }
-          }, false);
 
-    let tags_section = document.getElementById('tags-section');
-    for (tag of tags) {
-        let txt = document.createTextNode(tag);
-        let utxt = document.createElement('a');
-        utxt.setAttribute('href', '#');
-        if (current_info.tags.indexOf(tag) == -1)
-            utxt.setAttribute('class', 'tag-off');//this was not selected before
-        else
-            utxt.setAttribute('class', 'tag-on');//this is already one of the tags
-        utxt.appendChild(txt);
-        let li = document.createElement('li');
-        li.appendChild(utxt);
-        tags_section.appendChild(li);
-        $(utxt).click(tag_click_handler);
+    for (tag of current_info.tags) {
+        create_tag_element(tag,true);
     }
 }
 
@@ -252,4 +253,43 @@ function update_status() {
         $(stat_p).text(current_tab_status);
 
     $(stat_p).attr('class', current_tab_status);
+}
+
+function add_tag(event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+
+        if (tag_input_el.value.length != 0) {
+            let newtag = tag_input_el.value;
+            //fix this later, change to Set instead
+            if(tags.indexOf(newtag)==-1)
+            {
+                tags.push(newtag);
+                chrome.storage.sync.set({ 'tags': tags });
+            }
+            if(!onscreen_tags.has(newtag))
+            {
+                create_tag_element(newtag,true);
+                onscreen_tags.add(newtag);
+                //make a red one appear
+            }
+            current_info.tags.push(newtag);
+            chrome.storage.sync.set({ [current_tab.url]: current_info });
+            //update the current info of this url
+
+            //swal(tag_input_el.value);
+            // Run my specific process with my_field.value 
+            //my_field.value = '';
+        }
+    }
+}
+
+function populate_tag_list()
+{
+    for(tag of tags)
+    {
+        let opt = document.createElement('option');
+        opt.setAttribute('value',tag);
+        tag_list_el.appendChild(opt);
+    }
 }
