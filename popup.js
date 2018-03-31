@@ -31,7 +31,7 @@ window.onload = function () {
     tag_input_el.addEventListener("keyup", add_tag, false);
     tag_list_el = document.getElementById("tag_list");
     tags_section = document.getElementById("tags-section");
-    populate_tag_list();
+
 };
 
 
@@ -84,6 +84,7 @@ function initialize() {
             }
 
             update_status();
+            populate_tag_list();
             if (current_tab_status != 'NA') {
                 current_info = obj[current_tab.url];
                 console.log(current_info);
@@ -109,8 +110,6 @@ function add_link_handler() {
             'time_added': new Date().toDateString(),
             'tags': []
         };
-        console.log(added_links);
-        console.log(current_info);
 
         chrome.storage.sync.set({
             'added_links': added_links,
@@ -118,7 +117,6 @@ function add_link_handler() {
         }, function () {
             update_status();
             display_tags();
-            console.log('saved!');
             swal('Problem saved!');
         });
     }
@@ -134,10 +132,7 @@ function remove_link_handler() {
         added_links = added_links.filter(link => (link != current_tab.url));
         current_tab_status = 'NA';
         current_info = null;
-        console.log(added_links);
-        chrome.storage.sync.set({ 'added_links': added_links }, function () {
-            console.log('removed!');
-        });
+        chrome.storage.sync.set({ 'added_links': added_links });
         hide_tags();
         update_status();
         chrome.storage.sync.remove(current_tab.url, function () {
@@ -170,13 +165,10 @@ function mark_solved_handler() {
         current_info.status = 'SOLVED';
         current_info.time_solved = new Date().toDateString();
         solved_links.push(current_tab.url);
-        console.log(solved_links);
-        console.log(current_info);
         chrome.storage.sync.set({
             'solved_links': solved_links,
             [current_tab.url]: current_info
         }, function () {
-            console.log('marked as solved!');
             swal('Problem marked as solved!');
         });
     }
@@ -184,15 +176,10 @@ function mark_solved_handler() {
 
 
 function show_saved_handler() {
-    chrome.storage.sync.get(null,
-        function (obj) {
-            console.log(obj);
-        }
-    );
     chrome.tabs.create({ 'url': chrome.extension.getURL('dashboard.html') });
 }
 
-function create_tag_element(tagname,on=false){
+function create_tag_element(tagname, on = false) {
     let txt = document.createTextNode(tagname);
     let utxt = document.createElement('a');
     utxt.setAttribute('href', '#');
@@ -213,7 +200,7 @@ function display_tags() {
     tagdiv.style.display = 'block';
 
     for (tag of current_info.tags) {
-        create_tag_element(tag,true);
+        create_tag_element(tag, true);
     }
 }
 
@@ -224,10 +211,10 @@ function hide_tags() {
     while (tags_section.hasChildNodes()) {
         tags_section.removeChild(tags_section.lastChild);
     }
+    onscreen_tags.clear();
 }
 
 function tag_click_handler() {
-    console.log('works!');
     if ($(this).attr('class') == 'tag-off') {
         console.log(this);
         if (!current_info.tags)
@@ -261,15 +248,14 @@ function add_tag(event) {
 
         if (tag_input_el.value.length != 0) {
             let newtag = tag_input_el.value;
-            //fix this later, change to Set instead
-            if(tags.indexOf(newtag)==-1)
-            {
+            
+            if ((tags.indexOf(newtag)) == -1) {
                 tags.push(newtag);
+                console.log(tags);
                 chrome.storage.sync.set({ 'tags': tags });
             }
-            if(!onscreen_tags.has(newtag))
-            {
-                create_tag_element(newtag,true);
+            if (!onscreen_tags.has(newtag)) {
+                create_tag_element(newtag, true);
                 onscreen_tags.add(newtag);
                 //make a red one appear
             }
@@ -284,12 +270,10 @@ function add_tag(event) {
     }
 }
 
-function populate_tag_list()
-{
-    for(tag of tags)
-    {
+function populate_tag_list() {
+    for (tag of tags) {
         let opt = document.createElement('option');
-        opt.setAttribute('value',tag);
+        opt.setAttribute('value', tag);
         tag_list_el.appendChild(opt);
     }
 }
