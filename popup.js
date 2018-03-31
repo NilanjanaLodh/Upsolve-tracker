@@ -72,10 +72,11 @@ function initialize() {
             else {
                 tags = obj.tags;
             }
+
+            update_status();
             if (current_tab_status != 'NA') {
                 current_info = obj[current_tab.url];
                 console.log(current_info);
-                update_status();
                 display_tags();
             }
         });
@@ -228,8 +229,9 @@ function tag_click_handler() {
 function update_status() {
     let stat_p = document.getElementById('status');
     if (current_tab_status == 'NA')
-        $(stat_p).text('');
+        $(stat_p).text('NOT IN TO-DO LIST');
     else
         $(stat_p).text(current_tab_status);
-        $(stat_p).attr('class',current_tab_status);
+
+    $(stat_p).attr('class', current_tab_status);
 }
