@@ -81,10 +81,10 @@ function initialize() {
 
 function add_link_handler() {
     if (current_tab_status == 'PENDING') {
-        alert('Problem is already saved!');
+        swal("Problem is already saved!");
     }
     else if (current_tab_status == 'SOLVED')
-        alert('You have solved this problem before!');
+        swal('You have solved this problem before!');
     else {
         current_tab_status = 'PENDING';
         added_links.push(current_tab.url);
@@ -102,17 +102,17 @@ function add_link_handler() {
         }, function () {
             display_tags();
             console.log('saved!');
-            alert(current_tab.url + ' saved!');
+            swal(current_tab.url + ' saved!');
         });
     }
 }
 
 function remove_link_handler() {
     if (current_tab_status == 'NA') {
-        alert('Problem is not in your todo list!');
+        swal('Problem is not in your todo list!');
     }
     else if (current_tab_status == 'SOLVED')
-        alert('You have solved this problem before!');
+        swal('You have solved this problem before!');
     else {
         added_links = added_links.filter(link => (link != current_tab.url));
         current_tab_status = 'NA';
@@ -123,14 +123,14 @@ function remove_link_handler() {
         });
         hide_tags();
         chrome.storage.sync.remove(current_tab.url, function () {
-            alert(current_tab.url + ' removed!');
+            swal(current_tab.url + ' removed!');
         });
     }
 }
 
 function mark_solved_handler() {
     if (current_tab_status == 'SOLVED') {
-        alert('You have solved this problem before!');
+        swal('You have solved this problem before!');
     }
     else {
         if (current_tab_status == 'PENDING') {
@@ -158,7 +158,7 @@ function mark_solved_handler() {
             [current_tab.url]: current_info
         }, function () {
             console.log('marked as solved!');
-            alert(current_tab.url + ' marked as solved!');
+            swal(current_tab.url + ' marked as solved!');
         });
     }
 }
@@ -170,7 +170,7 @@ function show_saved_handler() {
             console.log(obj);
         }
     );
-    chrome.tabs.create({ 'url': chrome.extension.getURL('upsolve-tracker-stats.html') });
+    chrome.tabs.create({ 'url': chrome.extension.getURL('dashboard.html') });
 }
 
 function display_tags() {

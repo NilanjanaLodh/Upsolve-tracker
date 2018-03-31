@@ -3,7 +3,7 @@
     "name": "UpSolve tracker",
     "version": "0.01",
     "browser_action": {
-        "default_icon": "greytick.png",
+        "default_icon": "images/greytick.png",
         "default_title": "UpSolve tracker",
         "default_popup": "popup.html"
     },
