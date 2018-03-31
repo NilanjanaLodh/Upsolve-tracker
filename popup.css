@@ -49,6 +49,7 @@ ul{
     overflow: hidden; 
     padding: 0;
     zoom: 1;
+    padding-top:20px; 
   }
   
   .tags li {
@@ -166,4 +167,12 @@ ul{
     border-radius: 4px 4px 4px 4px;
     text-align: center;
     font-weight: bold;
+  }
+
+  input[list]
+  {
+    border: 2px solid rgb(189, 189, 189);
+    border-radius: 5px 5px 5px 5px;
+    height: 20px;
+
   }

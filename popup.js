@@ -183,7 +183,9 @@ function show_saved_handler() {
 }
 
 function display_tags() {
-    var my_field = document.getElementById('TagInput');
+    let tagdiv = document.getElementById('tagdiv');
+    tagdiv.style.display = 'block';
+    let my_field = document.getElementById('TagInput');
     
           my_field.addEventListener("keyup", function (event) {
               if (event.keyCode == 13) {
@@ -215,6 +217,8 @@ function display_tags() {
 }
 
 function hide_tags() {
+    let tagdiv = document.getElementById('tagdiv');
+    tagdiv.style.display = 'none';
     let tags_section = document.getElementById('tags-section');
     while (tags_section.hasChildNodes()) {
         tags_section.removeChild(tags_section.lastChild);
