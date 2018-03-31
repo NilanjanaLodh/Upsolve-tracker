@@ -183,6 +183,20 @@ function show_saved_handler() {
 }
 
 function display_tags() {
+    var my_field = document.getElementById('TagInput');
+    
+          my_field.addEventListener("keyup", function (event) {
+              if (event.keyCode == 13) {
+                  event.preventDefault();
+    
+                  if (my_field.value.length != 0) {
+                      swal(my_field.value);
+                      // Run my specific process with my_field.value 
+                      //my_field.value = '';
+                  }
+              }
+          }, false);
+
     let tags_section = document.getElementById('tags-section');
     for (tag of tags) {
         let txt = document.createTextNode(tag);
