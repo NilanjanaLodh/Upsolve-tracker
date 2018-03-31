@@ -28,13 +28,15 @@ window.onload = function () {
 // initial setup
 function initialize() {
     console.log('Before  : ' + new Date().toLocaleString());
-    //chrome storage set up
+    //setting up the chrome storage, and other variables
     chrome.storage.sync.get(null, function (obj) {
+        //query for the already stored data in chrome storage
         console.log(obj);
         var prev_added_links = obj.added_links;
         var prev_solved_links = obj.solved_links;
         var query = { active: true, currentWindow: true };
         chrome.tabs.query(query, function (tabs) {
+            //query for the current tab, and set the other variebles accordingly
             current_tab = tabs[0];
             if (!prev_added_links) {
                 chrome.storage.sync.set({ 'added_links': [] }, function () {
@@ -46,6 +48,8 @@ function initialize() {
                 added_links = prev_added_links;
                 if (added_links.indexOf(current_tab.url) != -1)
                     current_tab_status = 'PENDING';
+                //we can change this later for better performance
+                // we can assign the status separately only
             }
             if (!prev_solved_links) {
                 chrome.storage.sync.set({ 'solved_links': [] }, function () {
@@ -71,6 +75,7 @@ function initialize() {
             if (current_tab_status != 'NA') {
                 current_info = obj[current_tab.url];
                 console.log(current_info);
+                update_status();
                 display_tags();
             }
         });
@@ -100,9 +105,10 @@ function add_link_handler() {
             'added_links': added_links,
             [current_tab.url]: current_info
         }, function () {
+            update_status();
             display_tags();
             console.log('saved!');
-            swal(current_tab.url + ' saved!');
+            swal('Problem saved!');
         });
     }
 }
@@ -122,8 +128,9 @@ function remove_link_handler() {
             console.log('removed!');
         });
         hide_tags();
+        update_status();
         chrome.storage.sync.remove(current_tab.url, function () {
-            swal(current_tab.url + ' removed!');
+            swal('Problem removed!');
         });
     }
 }
@@ -148,6 +155,7 @@ function mark_solved_handler() {
             display_tags();
         }
         current_tab_status = 'SOLVED';
+        update_status();
         current_info.status = 'SOLVED';
         current_info.time_solved = new Date().toDateString();
         solved_links.push(current_tab.url);
@@ -158,7 +166,7 @@ function mark_solved_handler() {
             [current_tab.url]: current_info
         }, function () {
             console.log('marked as solved!');
-            swal(current_tab.url + ' marked as solved!');
+            swal('Problem marked as solved!');
         });
     }
 }
@@ -215,4 +223,13 @@ function tag_click_handler() {
     }
     console.log(current_info);
     chrome.storage.sync.set({ [current_tab.url]: current_info });
+}
+
+function update_status() {
+    let stat_p = document.getElementById('status');
+    if (current_tab_status == 'NA')
+        $(stat_p).text('');
+    else
+        $(stat_p).text(current_tab_status);
+        $(stat_p).attr('class',current_tab_status);
 }

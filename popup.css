@@ -133,3 +133,19 @@
     top: 0;
     zoom: 1;
   }
+
+  .SOLVED{
+    background: rgba(0, 247, 124, 0.993);
+    padding: 4px;  
+    border-radius: 4px 4px 4px 4px;
+    text-align: center;
+    font-weight: bold;
+
+  }
+  .PENDING{
+    background: rgba(255, 143, 15, 0.993);
+    padding: 4px;  
+    border-radius: 4px 4px 4px 4px;
+    text-align: center;
+    font-weight: bold;
+  }
