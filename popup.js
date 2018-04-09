@@ -240,6 +240,7 @@ function update_status() {
         $(stat_p).text(current_tab_status);
 
     $(stat_p).attr('class', current_tab_status);
+    chrome.browserAction.setBadgeText({ text: added_links.length.toString() });
 }
 
 function add_tag(event) {
