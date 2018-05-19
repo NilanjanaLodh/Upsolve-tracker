@@ -728,7 +728,9 @@ body {
 }
 
 #sidebar-nav-links {
-	flex-flow: column nowrap
+	flex-flow: column nowrap;
+	font-family: Ubuntu, Arial, sans-serif;
+	font-size: 1rem
 }
 
 #sidebar-icon-links {
