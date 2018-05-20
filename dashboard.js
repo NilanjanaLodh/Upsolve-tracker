@@ -12,6 +12,7 @@ window.onload = function () {
         add_pending_problems();
         add_solved_problems();
     });
+    document.getElementById("clear_stats").addEventListener("click", clear_stats);
 };
 
 function add_pending_problems() {
@@ -79,4 +80,8 @@ function extract_tagstring(info) {
         }
     }
     return tagstring;
+}
+
+function clear_stats() {
+    chrome.storage.sync.clear();
 }
