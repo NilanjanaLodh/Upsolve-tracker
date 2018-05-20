@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "UpSolve tracker",
-    "version": "0.01",
+    "version": "0.02",
     "browser_action": {
         "default_icon": "images/greytick.png",
         "default_title": "UpSolve tracker",
